@@ -13,6 +13,11 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  void registerUser() async {
+    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+    } else {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
