@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_nodejs/components/my_text_field.dart';
+import 'package:flutter_nodejs/config.dart';
+import 'package:flutter_nodejs/pages/login_page.dart';
+import 'package:http/http.dart' as http;
 
 class RegisterPage extends StatefulWidget {
   final void Function() onTap;
@@ -15,7 +20,29 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void registerUser() async {
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-    } else {}
+      var regBody = {
+        "email": emailController.text,
+        "password": passwordController.text,
+      };
+
+      var response = await http.post(
+        Uri.parse(registration),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(regBody),
+      );
+
+      var jsonResponse = jsonDecode(response.body);
+      print(jsonResponse['status']);
+
+      if (jsonResponse['status']) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
+    } else {
+      // show error message
+    }
   }
 
   @override
@@ -44,7 +71,10 @@ class _RegisterPageState extends State<RegisterPage> {
               obscureText: true,
             ),
             const SizedBox(height: 30),
-            ElevatedButton(onPressed: () {}, child: const Text('Register')),
+            ElevatedButton(
+              onPressed: registerUser,
+              child: const Text('Register'),
+            ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
