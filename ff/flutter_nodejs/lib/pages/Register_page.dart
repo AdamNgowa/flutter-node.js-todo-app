@@ -32,7 +32,6 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
       var jsonResponse = jsonDecode(response.body);
-      print(jsonResponse['status']);
 
       if (jsonResponse['status']) {
         Navigator.push(
