@@ -34,6 +34,9 @@ class _RegisterPageState extends State<RegisterPage> {
       var jsonResponse = jsonDecode(response.body);
 
       if (jsonResponse['status']) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Registration Successful')));
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => LoginPage()),

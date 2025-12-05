@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_nodejs/components/my_text_field.dart';
+import 'package:flutter_nodejs/config.dart';
+import 'package:flutter_nodejs/pages/dashboard.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function()? onTap;
@@ -12,6 +18,47 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  late SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    initSharedPref();
+  }
+
+  void initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  void loginUser() async {
+    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+      var reqBody = {
+        "email": emailController.text,
+        "password": passwordController.text,
+      };
+      var response = await http.post(
+        Uri.parse(login),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(reqBody),
+      );
+      var jsonResponse = jsonDecode(response.body);
+      if (jsonResponse["status"]) {
+        var myToken = jsonResponse['token'];
+        prefs.setString('token', myToken);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Dashboard(token: myToken)),
+        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Login Successful')));
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error logging in')));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: true,
               ),
               const SizedBox(height: 30),
-              ElevatedButton(onPressed: () {}, child: const Text('Login')),
+              ElevatedButton(onPressed: loginUser, child: const Text('Login')),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
