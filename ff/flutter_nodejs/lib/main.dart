@@ -12,7 +12,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final token;
-  const MyApp({required this.token, super.key});
+  const MyApp({this.token, super.key});
 
   @override
   Widget build(BuildContext context) {
