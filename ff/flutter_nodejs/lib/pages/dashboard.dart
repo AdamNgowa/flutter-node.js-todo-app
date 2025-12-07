@@ -75,9 +75,35 @@ class _DashboardState extends State<Dashboard> {
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(reqBody),
     );
+
     var jsonResponse = jsonDecode(response.body);
+
     items = jsonResponse["success"];
     setState(() {});
+  }
+
+  deleteTodo(id) async {
+    var reqBody = {"id": id};
+    var response = await http.post(
+      Uri.parse(deleteToDoUrl),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(reqBody),
+    );
+
+    var jsonResponse = jsonDecode(response.body);
+
+    if (jsonResponse["status"] == true) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Todo deleted")));
+
+      // refresh list properly
+      getToDoList(userId);
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Delete failed")));
+    }
   }
 
   @override
@@ -91,6 +117,19 @@ class _DashboardState extends State<Dashboard> {
               itemCount: items.length,
               itemBuilder: (context, int index) {
                 return Slidable(
+                  endActionPane: ActionPane(
+                    motion: ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) {
+                          deleteTodo('${items[index]['_id']}');
+                        },
+                        icon: Icons.delete,
+                        label: 'Delete',
+                        backgroundColor: Colors.red,
+                      ),
+                    ],
+                  ),
                   child: Card(
                     child: ListTile(
                       title: Text('${items[index]["title"]}'),

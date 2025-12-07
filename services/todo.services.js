@@ -10,5 +10,9 @@ class ToDoServices {
     const todoData = await ToDoModel.find({ userId });
     return todoData;
   }
+  static async deleteTodo(id) {
+    const deletedtodo = await ToDoModel.findOneAndDelete({ _id: id });
+    return deletedtodo;
+  }
 }
 module.exports = ToDoServices;

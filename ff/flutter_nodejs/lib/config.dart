@@ -5,3 +5,4 @@ final login = '${url}login';
 
 final addToDoUrl = '${url}storeToDo';
 final getToDoListUrl = '${url}getUserToDoList';
+final deleteToDoUrl = '${url}deleteToDo';
